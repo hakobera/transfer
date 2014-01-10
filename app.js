@@ -99,7 +99,7 @@ app.use(route.post('/api/complete/:id', function *(id) {
   }
 
   if (!(yield aws.isFileExist(item.id))) {
-    this.throw(400, 'File not exists');
+    this.throw(400, 'File does not exists');
   }
 
   var user = yield* auth.create();
@@ -120,6 +120,10 @@ app.use(route.get('/api/download/:id', function *(id) {
   var data = yield aws.getItem(id);
   if (!data.id || data.state !== state.READY) {
     this.throw(404, 'Not Found');
+  }
+
+  if (!(yield aws.isFileExist(item.id))) {
+    this.throw(410, 'File is removed');
   }
 
   yield* auth.validate(this, data);
@@ -144,6 +148,10 @@ app.use(route.get('/download/:id', function *(id) {
   yield* auth.validate(this, data);
 
   if (data.state === state.READY) {
+    if (!(yield aws.isFileExist(item.id))) {
+      this.throw(410, 'File is removed');
+    }
+
     var signedUrl = yield aws.signedDownloadUrl(data);
     this.body = yield render('download', { url: signedUrl });
   } else {
