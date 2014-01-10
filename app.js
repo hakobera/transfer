@@ -8,7 +8,6 @@ var logger = require('koa-logger');
 var route = require('koa-route');
 var serve = require('koa-static');
 var parse = require('co-body');
-var livereload = require('koa-livereload');
 var uuid = require('node-uuid');
 var raven = require('raven');
 var util = require('util');
@@ -41,7 +40,7 @@ var app = module.exports = koa();
 app.use(responseTime());
 
 if (env === 'development') {
-  app.use(livereload());
+  app.use(require('koa-livereload')());
 }
 
 if (env !== 'test') {
