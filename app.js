@@ -74,7 +74,6 @@ app.use(route.post('/api/register', function *() {
     filename: body.filename,
     url: signedUrl,
     state: state.PREPARING,
-    from: body.from,
     to: body.recipient,
     preparingMailSubject: body.preparing_mail.title,
     preparingMailText: body.preparing_mail.body,
