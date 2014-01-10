@@ -98,6 +98,10 @@ app.use(route.post('/api/complete/:id', function *(id) {
     this.throw(400, 'Already completed');
   }
 
+  if (!(yield aws.isFileExist(item.id))) {
+    this.throw(400, 'File not exists');
+  }
+
   var user = yield* auth.create();
 
   item.state = state.READY;
