@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block title %}My Page{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+  <h1>Ready</h1>
+  <p class="lead">Click button to download file.</p>
+  <p><a class="btn btn-lg btn-success" href="{{ url }}" role="button">Download</a></p>
+</div>
+{% endblock %}

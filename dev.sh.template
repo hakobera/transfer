@@ -1,0 +1,16 @@
+#!/bin/sh
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_REGION=
+export AWS_S3_BUCKET=
+export AWS_DYNAMODB_TABLE=
+#export RAVEN_URL=
+
+./node_modules/forever/bin/forever \
+  -w \
+  -c 'node --harmony' \
+  -l logs/forever.log \
+  -o logs/out.log \
+  -e logs/error.log \
+  --watchIgnore *.log \
+  app.js
