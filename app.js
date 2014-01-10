@@ -11,10 +11,12 @@ var parse = require('co-body');
 var livereload = require('koa-livereload');
 var uuid = require('node-uuid');
 var raven = require('raven');
+var util = require('util');
 var aws = require('./lib/aws');
 var render = require('./lib/render');
 var auth = require('./lib/auth');
 var state = require('./lib/state');
+var mail = require('./lib/mail');
 var exceptionHandler = require('./lib/exceptionHandler');
 var koa = require('koa');
 
@@ -25,6 +27,10 @@ var koa = require('koa');
 var env = process.env.NODE_ENV || 'development';
 var port = process.env.PORT || 3000;
 var host = process.env.HOST || 'http://localhost:' + port;
+
+function downloadUrl(id) {
+  return util.format('%s/download/%s', host, id);
+}
 
 /**
  * Middleware settings.
@@ -54,23 +60,34 @@ if (env === 'production') {
 app.use(route.post('/api/register', function *() {
   var body = yield parse(this, { limit: '1mb' });
 
-  if (!body.name) this.throw(400, '.name required');
+  if (!body.filename && !body.contentType) {
+    this.throw(400, 'filename or contentType is required.');
+  }
 
   var id = uuid.v1();
   var signedUrl = yield aws.signedUploadUrl({
     id: id,
-    name: body.name
+    filename: body.filename
   });
 
   var item = {
     id: id,
+    filename: body.filename,
     url: signedUrl,
-    state: state.PREPARING
+    state: state.PREPARING,
+    from: body.from,
+    to: body.recipient,
+    preparingMailSubject: body.preparing_mail.title,
+    preparingMailText: body.preparing_mail.body,
+    availableMailSubject: body.available_mail.title,
+    availableMailText: body.available_mail.body
   };
 
   yield aws.putItem(item);
 
   this.body = item;
+
+  mail.sendPreparingMail(item, downloadUrl(id));
 }));
 
 app.use(route.post('/api/complete/:id', function *(id) {
@@ -93,6 +110,8 @@ app.use(route.post('/api/complete/:id', function *(id) {
 
   item.pass = user.pass;
   this.body = item;
+
+  mail.sendAvailableMail(item, downloadUrl(id), item.userName, item.pass);
 }));
 
 app.use(route.get('/api/download/:id', function *(id) {

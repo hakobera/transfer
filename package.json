@@ -27,7 +27,8 @@
     "swig": "~1.2.2",
     "raven": "~0.6.0",
     "basic-auth": "0.0.1",
-    "pswd": "~2.0.0"
+    "pswd": "~2.0.0",
+    "nodemailer": "~0.6.0"
   },
   "devDependencies": {
     "koa-livereload": "~0.1.0",
