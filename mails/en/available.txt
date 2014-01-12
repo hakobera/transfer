@@ -1,0 +1,11 @@
+*** This is an automatically generated email, please do not reply ***
+
+You have received a new file.
+Follow the link below to download the file:
+
+URL:
+{{ item.downloadUrl }}
+
+Sender comment:
+
+{{ item.comment }}

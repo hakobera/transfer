@@ -1,3 +1,0 @@
-{{ item.preparingMailText }}
-
-The content will be donloaded in {{ url }}

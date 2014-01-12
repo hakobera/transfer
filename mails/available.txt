@@ -1,6 +1,0 @@
-{{ item.availableMailText }}
-
-You can download content in {{ url }}.
-
-user: {{ user }}
-pass: {{ pass }}

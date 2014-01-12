@@ -69,20 +69,18 @@ app.use(route.post('/api/register', function *() {
   var item = {
     id: id,
     filename: body.filename,
-    url: signedUrl,
     state: state.PREPARING,
+    locale: body.locale,
     to: body.recipient,
-    preparingMailSubject: body.preparing_mail.title,
-    preparingMailText: body.preparing_mail.body,
-    availableMailSubject: body.available_mail.title,
-    availableMailText: body.available_mail.body
+    title: body.title,
+    comment: body.comment
   };
 
   yield aws.putItem(item);
 
+  item.uploadUrl = signedUrl;
+  item.downloadUrl = downloadUrl(id);
   this.body = item;
-
-  mail.sendPreparingMail(item, downloadUrl(id));
 }));
 
 app.use(route.post('/api/complete/:id', function *(id) {
@@ -91,8 +89,8 @@ app.use(route.post('/api/complete/:id', function *(id) {
     this.throw(404, 'Not Found');
   }
 
-  if (item.state !== state.PREPARING) {
-    this.throw(400, 'Already completed');
+  if (item.state !== state.AVAILABLE) {
+    this.throw(400, 'Already available');
   }
 
   if (!(yield aws.isFileExist(item.id))) {
@@ -101,21 +99,22 @@ app.use(route.post('/api/complete/:id', function *(id) {
 
   var user = yield* auth.create();
 
-  item.state = state.READY;
+  item.state = state.AVAILABLE;
   item.userName = user.name;
   item.hashedPass = user.hashedPass;
 
   yield aws.putItem(item);
 
   item.pass = user.pass;
+  item.downloadUrl = downloadUrl(id);
   this.body = item;
 
-  mail.sendAvailableMail(item, downloadUrl(id), item.userName, item.pass);
+  mail.sendAvailableMail(item);
 }));
 
 app.use(route.get('/api/download/:id', function *(id) {
   var data = yield aws.getItem(id);
-  if (!data.id || data.state !== state.READY) {
+  if (!data.id || data.state !== state.AVAILABLE) {
     this.throw(404, 'Not Found');
   }
 
@@ -157,16 +156,12 @@ app.use(route.get('/download/:id', function *(id) {
 
   yield* auth.validate(this, data);
 
-  if (data.state === state.READY) {
-    if (!(yield aws.isFileExist(item.id))) {
-      this.throw(410, 'File is removed');
-    }
-
-    var signedUrl = yield aws.signedDownloadUrl(data);
-    this.body = yield render('download', { url: signedUrl });
-  } else {
-    this.body = yield render('preparing');
+  if (!(yield aws.isFileExist(item.id))) {
+    this.throw(410, 'File is removed');
   }
+
+  var signedUrl = yield aws.signedDownloadUrl(data);
+  this.body = yield render('download', { url: signedUrl });
 }));
 
 /**
