@@ -132,6 +132,19 @@ app.use(route.get('/api/download/:id', function *(id) {
   };
 }));
 
+app.use(route.post('/api/delete/:id', function *(id) {
+  var item = yield aws.getItem(id);
+  if (!item.id) {
+    this.throw(404, 'Not Found');
+  }
+
+  item.state = state.DELETED;
+
+  yield aws.putItem(item);
+
+  this.body = item;
+}));
+
 /**
  * Page route
  */
