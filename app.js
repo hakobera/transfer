@@ -39,10 +39,6 @@ var app = module.exports = koa();
 
 app.use(responseTime());
 
-if (env === 'development') {
-  app.use(require('koa-livereload')());
-}
-
 if (env !== 'test') {
   app.use(logger());
 }
@@ -58,6 +54,7 @@ if (env === 'production') {
 
 app.use(route.post('/api/register', function *() {
   var body = yield parse(this, { limit: '1mb' });
+  console.log(body);
 
   if (!body.filename && !body.contentType) {
     this.throw(400, 'filename or contentType is required.');
