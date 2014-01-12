@@ -89,8 +89,8 @@ app.use(route.post('/api/complete/:id', function *(id) {
     this.throw(404, 'Not Found');
   }
 
-  if (item.state !== state.AVAILABLE) {
-    this.throw(400, 'Already available');
+  if (item.state !== state.PREPARING) {
+    this.throw(400, 'Already available or deleted');
   }
 
   if (!(yield aws.isFileExist(item.id))) {
@@ -107,14 +107,15 @@ app.use(route.post('/api/complete/:id', function *(id) {
 
   item.pass = user.pass;
   item.downloadUrl = downloadUrl(id);
+  delete item.hashedPass;
   this.body = item;
 
   mail.sendAvailableMail(item);
 }));
 
 app.use(route.get('/api/download/:id', function *(id) {
-  var data = yield aws.getItem(id);
-  if (!data.id || data.state !== state.AVAILABLE) {
+  var item = yield aws.getItem(id);
+  if (!item.id || item.state !== state.AVAILABLE) {
     this.throw(404, 'Not Found');
   }
 
@@ -122,12 +123,10 @@ app.use(route.get('/api/download/:id', function *(id) {
     this.throw(410, 'File is removed');
   }
 
-  yield* auth.validate(this, data);
-
-  var signedUrl = yield aws.signedDownloadUrl(data);
+  var signedUrl = yield aws.signedDownloadUrl(item);
   this.body = {
     id: id,
-    url: signedUrl
+    downloadUrl: signedUrl
   };
 }));
 
@@ -149,18 +148,18 @@ app.use(route.post('/api/delete/:id', function *(id) {
  */
 
 app.use(route.get('/download/:id', function *(id) {
-  var data = yield aws.getItem(id);
-  if (!data.id) {
+  var item = yield aws.getItem(id);
+  if (!item.id) {
     this.throw(404, 'Not Found');
   }
 
-  yield* auth.validate(this, data);
+  yield* auth.validate(this, item);
 
   if (!(yield aws.isFileExist(item.id))) {
     this.throw(410, 'File is removed');
   }
 
-  var signedUrl = yield aws.signedDownloadUrl(data);
+  var signedUrl = yield aws.signedDownloadUrl(item);
   this.body = yield render('download', { url: signedUrl });
 }));
 
