@@ -7,7 +7,7 @@ export AWS_DYNAMODB_TABLE=
 export MAIL_FROM=
 #export MAILGUN_SMTP_LOGIN=
 #export MAILGUN_SMTP_PASSWORD=
-#export RAVEN_URL=
+#export SENTRY_DSN=
 
 ./node_modules/forever/bin/forever \
   -w \
