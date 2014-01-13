@@ -4,8 +4,24 @@
 
 {% block content %}
 <div class="jumbotron">
-  <h1>Ready</h1>
-  <p class="lead">Click button to download file.</p>
-  <p><a class="btn btn-lg btn-success" href="{{ url }}" role="button">Download</a></p>
+  <h1>{{ item.filename }}</h1>
+  <p class="lead">Click button to download.</p>
+  <p><a id="downloadButton" class="btn btn-lg btn-success" href="javascript:void(0);" role="button">Download</a></p>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(function () {
+  $('#downloadButton').on('click', function () {
+    $.get('{{ item.downloadUrl }}')
+    .success(function (data) {
+      window.location.href = data.downloadUrl;
+    })
+    .error(function () {
+      alert('Error!');
+    })
+  });
+});
+</script>
 {% endblock %}

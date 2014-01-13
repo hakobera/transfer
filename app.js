@@ -119,14 +119,15 @@ app.use(route.get('/api/download/:id', function *(id) {
     this.throw(404, 'Not Found');
   }
 
+  yield* auth.validate(this, item);
+
   if (!(yield aws.existsObject(item.id))) {
     this.throw(410, 'File is removed');
   }
 
-  var signedUrl = yield aws.signedDownloadUrl(item);
   this.body = {
     id: id,
-    downloadUrl: signedUrl
+    downloadUrl: yield aws.signedDownloadUrl(item)
   };
 }));
 
@@ -159,8 +160,8 @@ app.use(route.get('/download/:id', function *(id) {
     this.throw(410, 'File is removed');
   }
 
-  var signedUrl = yield aws.signedDownloadUrl(item);
-  this.body = yield render('download', { url: signedUrl });
+  item.downloadUrl = '/api/download/' + item.id;
+  this.body = yield render('download', { item: item });
 }));
 
 /**
