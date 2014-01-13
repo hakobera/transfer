@@ -11,7 +11,6 @@ var parse = require('co-body');
 var uuid = require('node-uuid');
 var raven = require('raven');
 var util = require('util');
-var mime = require('mime');
 var aws = require('./lib/aws');
 var render = require('./lib/render');
 var auth = require('./lib/auth');
@@ -61,16 +60,14 @@ app.use(route.post('/api/register', function *() {
   }
 
   var id = uuid.v1();
-  var contentType = body.contentType || mime.lookup(body.filename);
   var signedUrl = yield aws.signedUploadUrl({
     id: id,
-    contentType: contentType
+    expires: 86400/*sec == 24 * 60 * 60 sec == 1 day*/
   });
 
   var item = {
     id: id,
     filename: body.filename,
-    contentType: contentType,
     state: state.PREPARING,
     locale: body.locale,
     to: body.recipient,
