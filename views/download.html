@@ -6,8 +6,8 @@
 <div class="jumbotron">
   <h1>{{ item.filename }}</h1>
   <p class="lead">{{ item.comment }}</p>
-  <p><small>Expired At: {{ item.expiredDate }}</small></p>
   <p><a id="downloadButton" class="btn btn-lg btn-success" href="javascript:void(0);" role="button">Download</a></p>
+  <p><small>{{ i18n.__('ExpiredAt') }} {{ item.expiredDate }}</small></p>
 </div>
 {% endblock %}
 

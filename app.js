@@ -19,6 +19,7 @@ var uuid = require('node-uuid');
 var raven = require('raven');
 var util = require('util');
 var moment = require('moment');
+var i18n = require('i18n');
 var aws = require('./lib/aws');
 var render = require('./lib/render');
 var auth = require('./lib/auth');
@@ -59,6 +60,15 @@ if (env === 'production') {
   app.jsonSpaces = 0;
   app.use(compress());
 }
+
+/**
+ * i18n settings
+ */
+i18n.configure({
+  locales: ['en', 'ja'],
+  defaultLocale: 'en',
+  directory: __dirname + '/locales'
+});
 
 /**
  * API route
@@ -171,8 +181,6 @@ app.use(route.get('/download/:id', function *(id) {
     this.throw(404, 'Not Found');
   }
 
-  console.log(item);
-
   yield* auth.validate(this, item);
 
   if (!(yield aws.existsObject(item.id))) {
@@ -185,7 +193,9 @@ app.use(route.get('/download/:id', function *(id) {
 
   item.downloadUrl = '/api/download/' + item.id;
   item.expiredDate = moment(item.expired).lang(item.locale || 'en').format('LLL');
-  this.body = yield render('download', { item: item });
+
+  i18n.setLocale(item.locale || 'en');
+  this.body = yield render('download', { item: item, i18n: i18n });
 }));
 
 /**

@@ -30,7 +30,8 @@
     "pswd": "~2.0.0",
     "nodemailer": "~0.6.0",
     "newrelic": "~1.2.0",
-    "moment": "~2.5.0"
+    "moment": "~2.5.0",
+    "i18n": "~0.4.1"
   },
   "devDependencies": {
     "koa-livereload": "~0.1.0",
