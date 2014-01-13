@@ -15,6 +15,8 @@ $ heroku create [your-app-name]
 ```
 $ heroku addons:add mailgun
 $ heroku addons:add sentry
+$ heroku addons:add newrelic:stark  # optional
+$ heroku addons:add papertrail      # optional
 ```
 
 Above setup is only use free/development add-on plans.
@@ -23,6 +25,8 @@ You can show which plan is avaiable in following pages.
 
 - [Mailgun | Add-ons | Heroku](https://addons.heroku.com/mailgun)
 - [Sentry | Add-ons | Heroku](https://addons.heroku.com/sentry)
+- [New Relic](https://addons.heroku.com/newrelic)
+- [Papertrail](https://addons.heroku.com/papertrail)
 
 ### Set config variables
 

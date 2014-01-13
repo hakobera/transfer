@@ -28,7 +28,8 @@
     "raven": "~0.6.0",
     "basic-auth": "0.0.1",
     "pswd": "~2.0.0",
-    "nodemailer": "~0.6.0"
+    "nodemailer": "~0.6.0",
+    "newrelic": "~1.2.0"
   },
   "devDependencies": {
     "koa-livereload": "~0.1.0",
