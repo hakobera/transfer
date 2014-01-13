@@ -11,6 +11,7 @@ var parse = require('co-body');
 var uuid = require('node-uuid');
 var raven = require('raven');
 var util = require('util');
+var mime = require('mime');
 var aws = require('./lib/aws');
 var render = require('./lib/render');
 var auth = require('./lib/auth');
@@ -54,21 +55,22 @@ if (env === 'production') {
 
 app.use(route.post('/api/register', function *() {
   var body = yield parse(this, { limit: '1mb' });
-  console.log(body);
 
   if (!body.filename && !body.contentType) {
     this.throw(400, 'filename or contentType is required.');
   }
 
   var id = uuid.v1();
+  var contentType = body.contentType || mime.lookup(body.filename);
   var signedUrl = yield aws.signedUploadUrl({
     id: id,
-    filename: body.filename
+    contentType: contentType
   });
 
   var item = {
     id: id,
     filename: body.filename,
+    contentType: contentType,
     state: state.PREPARING,
     locale: body.locale,
     to: body.recipient,
@@ -93,7 +95,7 @@ app.use(route.post('/api/complete/:id', function *(id) {
     this.throw(400, 'Already available or deleted');
   }
 
-  if (!(yield aws.isFileExist(item.id))) {
+  if (!(yield aws.existsObject(item.id))) {
     this.throw(400, 'File does not exists');
   }
 
@@ -103,6 +105,7 @@ app.use(route.post('/api/complete/:id', function *(id) {
   item.userName = user.name;
   item.hashedPass = user.hashedPass;
 
+  yield aws.copyObject(item);
   yield aws.putItem(item);
 
   item.pass = user.pass;
@@ -119,7 +122,7 @@ app.use(route.get('/api/download/:id', function *(id) {
     this.throw(404, 'Not Found');
   }
 
-  if (!(yield aws.isFileExist(item.id))) {
+  if (!(yield aws.existsObject(item.id))) {
     this.throw(410, 'File is removed');
   }
 
@@ -155,7 +158,7 @@ app.use(route.get('/download/:id', function *(id) {
 
   yield* auth.validate(this, item);
 
-  if (!(yield aws.isFileExist(item.id))) {
+  if (!(yield aws.existsObject(item.id))) {
     this.throw(410, 'File is removed');
   }
 
