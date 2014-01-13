@@ -4,10 +4,10 @@ export AWS_SECRET_ACCESS_KEY=
 export AWS_REGION=
 export AWS_S3_BUCKET=
 export AWS_DYNAMODB_TABLE=
-export MAIL_FROM=
+# If you want to test mail feature, set followings.
+#export MAIL_FROM=
 #export MAILGUN_SMTP_LOGIN=
 #export MAILGUN_SMTP_PASSWORD=
-#export SENTRY_DSN=
 
 ./node_modules/forever/bin/forever \
   -w \
