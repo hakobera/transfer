@@ -18,6 +18,7 @@ var parse = require('co-body');
 var uuid = require('node-uuid');
 var raven = require('raven');
 var util = require('util');
+var moment = require('moment');
 var aws = require('./lib/aws');
 var render = require('./lib/render');
 var auth = require('./lib/auth');
@@ -36,6 +37,10 @@ var host = process.env.HOST || 'http://localhost:' + port;
 
 function downloadUrl(id) {
   return util.format('%s/download/%s', host, id);
+}
+
+function expired(item) {
+  return moment.utc().isAfter(moment.utc(item.expired));
 }
 
 /**
@@ -106,6 +111,7 @@ app.use(route.post('/api/complete/:id', function *(id) {
   var user = yield* auth.create();
 
   item.state = state.AVAILABLE;
+  item.expired = moment.utc().add('days', 7).format();
   item.userName = user.name;
   item.hashedPass = user.hashedPass;
 
@@ -129,7 +135,11 @@ app.use(route.get('/api/download/:id', function *(id) {
   yield* auth.validate(this, item);
 
   if (!(yield aws.existsObject(item.id))) {
-    this.throw(410, 'File is removed');
+    this.throw(410, 'File has removed');
+  }
+
+  if (expired(item)) {
+    this.throw(403, 'File has expired');
   }
 
   this.body = {
@@ -161,13 +171,20 @@ app.use(route.get('/download/:id', function *(id) {
     this.throw(404, 'Not Found');
   }
 
+  console.log(item);
+
   yield* auth.validate(this, item);
 
   if (!(yield aws.existsObject(item.id))) {
-    this.throw(410, 'File is removed');
+    this.throw(410, 'File has removed');
+  }
+
+  if (expired(item)) {
+    this.throw(403, 'File has expired');
   }
 
   item.downloadUrl = '/api/download/' + item.id;
+  item.expiredDate = moment(item.expired).lang(item.locale || 'en').format('LLL');
   this.body = yield render('download', { item: item });
 }));
 
