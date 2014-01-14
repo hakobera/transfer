@@ -1,4 +1,4 @@
-# Transfer
+# Transfer [![Build Status](https://travis-ci.org/hakobera/transfer.png?branch=master)](https://travis-ci.org/hakobera/transfer)
 
 Transfer is a simple file sharing service.
 
