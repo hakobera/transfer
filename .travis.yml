@@ -5,5 +5,6 @@ env:
   global:
     - AWS_REGION="us-east-1"
     - AWS_S3_BUCKET="hakobera-transfer-test"
+    - AWS_DYNAMODB_TABLE="transfer_test"
     - secure: KHB2Eh7zBGjMu8F80s9wJu0rIZdg1mbY67OebME9C5in2hP3wnVjgyIou7IdOV3NZjXkzpM9IdOu/zbZkjwxUgvBpANk2UFwir3oKfpSQuqtXuIS0KzVC+ahUVd6jWoZST88Ib3xg1Cz8cR7VFV8FjJAJQUBFr0AleXTMuD5xoE=
     - secure: MXBnvjyc+dF7S15FEByglY/WW7rrh7SjVOIJo6V207XDgIReDr9J+isJ1XwKPxADikGaT0AeTf2Vf0V2pG8MMfhN90QZYoIhJNEBvwgFu9XynMxw3UTX45pu3E6Q/dRkk0H7HvKSHb720l6hsMD1J9gw9kMIMCEPRyVkjondy1U=
