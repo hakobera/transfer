@@ -1,3 +1,11 @@
+// patch for travis-ci
+var AWS = require('aws-sdk');
+AWS.config.update({
+  httpOptions: {
+    timeout: 0
+  }
+});
+
 var aws = require('../lib/aws');
 var should = require('should');
 var sinon = require('sinon');
