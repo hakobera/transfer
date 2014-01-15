@@ -90,12 +90,12 @@ describe('app', function () {
       .end(done);
     });
 
-    it('missing title when recipient is set', function (done) {
+    it('missing title when to is set', function (done) {
       request(app.listen())
       .post('/api/register')
       .send({
         filename: 'test.json',
-        recipient: 'test@example.com'
+        to: 'test@example.com'
       })
       .expect(400)
       .end(done);

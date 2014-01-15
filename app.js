@@ -81,7 +81,7 @@ app.use(route.post('/api/register', function *() {
     this.throw(400, '.filename is required.');
   }
 
-  if (body.recipient && !body.title) {
+  if (body.to && !body.title) {
     this.throw(400, '.title is required if .recipient is set')
   }
 
