@@ -1,10 +1,10 @@
 language: node_js
 node_js:
-  - "0.11"
+- '0.11'
 env:
   global:
-    - AWS_REGION="us-east-1"
-    - AWS_S3_BUCKET="hakobera-transfer-test"
-    - AWS_DYNAMODB_TABLE="transfer_test"
-    - secure: KHB2Eh7zBGjMu8F80s9wJu0rIZdg1mbY67OebME9C5in2hP3wnVjgyIou7IdOV3NZjXkzpM9IdOu/zbZkjwxUgvBpANk2UFwir3oKfpSQuqtXuIS0KzVC+ahUVd6jWoZST88Ib3xg1Cz8cR7VFV8FjJAJQUBFr0AleXTMuD5xoE=
-    - secure: MXBnvjyc+dF7S15FEByglY/WW7rrh7SjVOIJo6V207XDgIReDr9J+isJ1XwKPxADikGaT0AeTf2Vf0V2pG8MMfhN90QZYoIhJNEBvwgFu9XynMxw3UTX45pu3E6Q/dRkk0H7HvKSHb720l6hsMD1J9gw9kMIMCEPRyVkjondy1U=
+  - AWS_REGION="us-east-1"
+  - AWS_S3_BUCKET="hakobera-transfer-test"
+  - AWS_DYNAMODB_TABLE="transfer_test"
+  - secure: Qa6QMdcxDLIz1eYV4nXiGQuYkDu4IsgleAezx/s+Ym7FdBJJEVmoljsop/adF1hMKeE2Rz766OrNxj/nMbU168DXhZ3bwWctGjU6xRUpJzlW+UFsdzePdnNOys5ejwZ+bZq9AQd+D9HaQEb+ccXurdcFCBT1njSoMGRDRYW+1AE=
+  - secure: abz4vP8uAe98ahdmYBJr6mMvI6uUxekc+ZHY7gxzBkG4vXzOeXBY2XEEN4qwdeLo7IiyZbZySQoyi2dqOW2/vRxb3S2PtYfDhkdvduBIjjOdbZfaKnuMs9AqbgCWut0DdG+57O2a3Oerv1c4EJ1XYIILf1iGxvsUd3ymtTMGQDI=

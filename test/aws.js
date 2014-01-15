@@ -1,9 +1,3 @@
-// patch for travis-ci
-var AWS = require('aws-sdk');
-AWS.config.update({
-
-});
-
 var aws = require('../lib/aws');
 var should = require('should');
 var sinon = require('sinon');
@@ -14,7 +8,10 @@ describe('aws', function () {
   describe('#putItem', function () {
     it('should store specified data', function (done) {
       var id = uuid.v1();
-      return done();
+      aws.putItem({ id: id })(function (err, data) {
+        if (err) return done(err);
+        done(err);
+      });
     });
 
     it('should throw error when data.id is empty', function (done) {
