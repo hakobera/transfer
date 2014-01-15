@@ -3,7 +3,6 @@ test:
 		--require should \
 		--reporter spec \
 		--harmony \
-		--bail \
-		api/*/test.js
+		--bail
 
 .PHONY: test
