@@ -23,6 +23,7 @@ describe('app', function () {
 
         should.exists(data.id);
         should.exists(data.uploadUrl);
+        should.exists(data.password);
         data.filename.should.equal('test.json');
         data.locale.should.equal('en');
         data.state.should.equal('preparing');
@@ -45,10 +46,11 @@ describe('app', function () {
       .post('/api/register')
       .send({
         filename: 'test.json',
-        recipient: 'test@example.com',
+        to: 'test@example.com',
         locale: 'ja',
         title: 'test title',
-        comment: 'test comment'
+        comment: 'test comment',
+        password: 'pass'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -59,6 +61,7 @@ describe('app', function () {
 
         should.exists(data.id);
         should.exists(data.uploadUrl);
+        data.password.should.equal('pass');
         data.filename.should.equal('test.json');
         data.locale.should.equal('ja');
         data.state.should.equal('preparing');
@@ -219,7 +222,6 @@ describe('app', function () {
             data.filename.should.equal('test.json');
             data.locale.should.equal('en');
             data.state.should.equal('available');
-            should.exists(data.pass);
             should.exists(data.expires);
 
             done();
@@ -245,6 +247,8 @@ describe('app', function () {
         console.log('=== upload start ===');
         var id = res.body.id;
         var uploadUrl = res.body.uploadUrl;
+        var pass = res.body.password;
+        var auth = 'Basic ' + new Buffer('transfer:' + pass).toString('base64');
 
         agent
         .put(uploadUrl)
@@ -263,9 +267,6 @@ describe('app', function () {
             if (err) return done(err);
             console.log('=== complete end ===');
             console.log('=== download start ===');
-
-            var pass = res.body.pass;
-            var auth = 'Basic ' + new Buffer('transfer:' + pass).toString('base64');
 
             request(server)
             .get('/api/download/' + id)

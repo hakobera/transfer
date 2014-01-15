@@ -95,15 +95,20 @@ app.use(route.post('/api/register', function *() {
     filename: body.filename,
     state: state.PREPARING,
     locale: body.locale || 'en',
-    to: body.recipient,
+    to: body.to,
     title: body.title,
     comment: body.comment
   };
 
+  var credential = yield* auth.create(body.password);
+  item.hashedPass = credential.hashedPass;
+
   yield aws.putItem(item);
 
+  item.password = credential.pass;
   item.uploadUrl = signedUrl;
   item.downloadUrl = downloadUrl(id);
+  delete item.hashedPass;
   this.body = item;
 }));
 
@@ -121,19 +126,13 @@ app.use(route.post('/api/complete/:id', function *(id) {
     this.throw(400, 'File does not exists');
   }
 
-  var user = yield* auth.create();
-
   item.state = state.AVAILABLE;
   item.expires = moment.utc().add('days', 7).format();
-  item.userName = user.name;
-  item.hashedPass = user.hashedPass;
 
   yield aws.copyObject(item);
   yield aws.putItem(item);
 
-  item.pass = user.pass;
   item.downloadUrl = downloadUrl(id);
-  delete item.hashedPass;
   this.body = item;
 
   mail.sendAvailableMail(item);
