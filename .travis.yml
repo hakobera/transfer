@@ -3,6 +3,7 @@ node_js:
 - '0.11'
 env:
   global:
+  - MAIL_FROM=hakobera@gmail.com
   - AWS_REGION="us-east-1"
   - AWS_S3_BUCKET="hakobera-transfer-test"
   - AWS_DYNAMODB_TABLE="transfer_test"
