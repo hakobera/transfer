@@ -5,7 +5,7 @@ var should = require('should');
 var app = require('../app');
 
 describe('app', function () {
-  this.timeout(10000);
+  this.timeout(15000);
 
   describe('POST /api/register', function () {
     it('with minimum parameter', function (done) {
@@ -278,7 +278,13 @@ describe('app', function () {
               var data = res.body;
               data.id.should.equal(id);
               should.exists(data.downloadUrl);
-              done();
+
+              agent
+              .get(data.downloadUrl)
+              .end(function (err, res) {
+                if (err) return done(err);
+                done();
+              });
             });
           });
         });

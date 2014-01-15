@@ -148,7 +148,7 @@ describe('aws', function () {
   });
 
   describe('#signedDownloadUrl', function () {
-    it('should return pre-signed getObject URL expired after 60 seconds', function (done) {
+    it('should return pre-signed getObject URL expired after 30 seconds', function (done) {
       co(function* () {
         var opts = {
           id: 'test'
@@ -157,23 +157,7 @@ describe('aws', function () {
         var expected = yield getSignedUrl('getObject', {
           Bucket: process.env.AWS_S3_BUCKET,
           Key: opts.id,
-          Expires: 60
-        });
-        url.should.equal(expected);
-      })(done);
-    });
-
-    it('should return pre-signed getObject URL expired after specified by arguments', function (done) {
-      co(function* () {
-        var opts = {
-          id: 'test',
-          expires: 120
-        };
-        var url = yield aws.signedDownloadUrl(opts);
-        var expected = yield getSignedUrl('getObject', {
-          Bucket: process.env.AWS_S3_BUCKET,
-          Key: opts.id,
-          Expires: opts.expires
+          Expires: 30
         });
         url.should.equal(expected);
       })(done);
