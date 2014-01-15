@@ -41,7 +41,7 @@ function downloadUrl(id) {
 }
 
 function expired(item) {
-  return moment.utc().isAfter(moment.utc(item.expired));
+  return moment.utc().isAfter(moment.utc(item.expires));
 }
 
 /**
@@ -77,21 +77,24 @@ i18n.configure({
 app.use(route.post('/api/register', function *() {
   var body = yield parse(this, { limit: '1mb' });
 
-  if (!body.filename && !body.contentType) {
-    this.throw(400, 'filename or contentType is required.');
+  if (!body.filename) {
+    this.throw(400, '.filename is required.');
+  }
+
+  if (body.recipient && !body.title) {
+    this.throw(400, '.title is required if .recipient is set')
   }
 
   var id = uuid.v1();
   var signedUrl = yield aws.signedUploadUrl({
-    id: id,
-    expires: 86400/*sec == 24 * 60 * 60 sec == 1 day*/
+    id: id
   });
 
   var item = {
     id: id,
     filename: body.filename,
     state: state.PREPARING,
-    locale: body.locale,
+    locale: body.locale || 'en',
     to: body.recipient,
     title: body.title,
     comment: body.comment
@@ -121,7 +124,7 @@ app.use(route.post('/api/complete/:id', function *(id) {
   var user = yield* auth.create();
 
   item.state = state.AVAILABLE;
-  item.expired = moment.utc().add('days', 7).format();
+  item.expires = moment.utc().add('days', 7).format();
   item.userName = user.name;
   item.hashedPass = user.hashedPass;
 
@@ -192,9 +195,9 @@ app.use(route.get('/download/:id', function *(id) {
   }
 
   item.downloadUrl = '/api/download/' + item.id;
-  item.expiredDate = moment(item.expired).lang(item.locale || 'en').format('LLL');
+  item.expiredDate = moment(item.expires).lang(item.locale || 'en').format('LLL');
 
-  i18n.setLocale(item.locale || 'en');
+  i18n.setLocale(item.locale);
   this.body = yield render('download', { item: item, i18n: i18n });
 }));
 

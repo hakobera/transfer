@@ -42,5 +42,14 @@ describe('mail', function () {
 
       mail.sendAvailableMail(item, cb);
     });
+
+    it('should not send mail if item.to is not set', function (done) {
+      var item = {};
+      mail.sendAvailableMail(item, function (err) {
+        if (err) return done(err);
+        mail.send.called.should.be.false;
+        done();
+      });
+    });
   });
 });
