@@ -5,7 +5,7 @@ var should = require('should');
 var app = require('../app');
 
 describe('app', function () {
-  this.timeout(15000);
+  this.timeout(10000);
 
   describe('POST /api/register', function () {
     it('with minimum parameter', function (done) {
@@ -99,6 +99,41 @@ describe('app', function () {
     });
   });
 
+  describe('POST /api/delete/:id', function () {
+    it('should set status to delete', function (done) {
+      var server = app.listen();
+
+      request(server)
+      .post('/api/register')
+      .send({ filename: 'test.json' })
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        var id = res.body.id;
+
+        request(server)
+        .post('/api/delete/' + id)
+        .expect(200)
+        .end(function (err, res) {
+          if (err) return done(err);
+
+          var data = res.body;
+          data.id.should.equal(id);
+          data.state.should.equal('deleted');
+          done();
+        });
+      });
+    });
+
+    it('should return 404 before register', function (done) {
+      request(app.listen())
+      .post('/api/delete/invalid')
+      .expect(404)
+      .end(done);
+    });
+  });
+
   describe('POST /api/complete/:id', function () {
     it('should return 404 before register', function (done) {
       request(app.listen())
@@ -122,6 +157,32 @@ describe('app', function () {
         .post('/api/complete/' + id)
         .expect(400)
         .end(done);
+      });
+    });
+
+    it('should return 400 after delete', function (done) {
+      var server = app.listen();
+
+      request(server)
+      .post('/api/register')
+      .send({ filename: 'test.json' })
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        var id = res.body.id;
+
+        request(server)
+        .post('/api/delete/' + id)
+        .expect(200)
+        .end(function (err, res) {
+          if (err) return done(err);
+
+          request(server)
+          .post('/api/complete/' + id)
+          .expect(400)
+          .end(done);
+        });
       });
     });
 
