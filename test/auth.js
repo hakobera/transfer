@@ -26,7 +26,7 @@ describe('auth', function () {
       };
 
       if (pass) {
-        req.headers.authorization = 'Basic ' + new Buffer('quipper:' + pass).toString('base64');
+        req.headers.authorization = 'Basic ' + new Buffer('transfer:' + pass).toString('base64');
       }
 
       sinon.spy(req, 'set');

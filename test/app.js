@@ -27,7 +27,16 @@ describe('app', function () {
         data.locale.should.equal('en');
         data.state.should.equal('preparing');
         data.downloadUrl.should.equal('http://localhost:3000/download/' + data.id);
-        done();
+
+        // check upload url
+        agent
+        .put(data.uploadUrl)
+        .send(JSON.stringify({ key: 'value' }))
+        .set('Content-Type', 'binary/octet-stream')
+        .end(function (err, res) {
+          if (err) return done(err);
+          done();
+        });
       });
     });
 
@@ -57,7 +66,16 @@ describe('app', function () {
         data.to.should.equal('test@example.com');
         data.title.should.equal('test title');
         data.comment.should.equal('test comment');
-        done();
+
+        // check upload url
+        agent
+        .put(data.uploadUrl)
+        .send(JSON.stringify({ key: 'value' }))
+        .set('Content-Type', 'binary/octet-stream')
+        .end(function (err, res) {
+          if (err) return done(err);
+          done();
+        });
       });
     });
 
@@ -81,8 +99,77 @@ describe('app', function () {
     });
   });
 
-  describe('all flow', function () {
-    it('should register, upload, complete', function (done) {
+  describe('POST /api/complete/:id', function () {
+    it('should return 404 before register', function (done) {
+      request(app.listen())
+      .post('/api/complete/invalid')
+      .expect(404)
+      .end(done);
+    });
+
+    it('should return 400 before upload', function (done) {
+      var server = app.listen();
+
+      request(server)
+      .post('/api/register')
+      .send({ filename: 'test.json' })
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        var id = res.body.id;
+        request(server)
+        .post('/api/complete/' + id)
+        .expect(400)
+        .end(done);
+      });
+    });
+
+    it('should return completed info', function (done) {
+      var server = app.listen();
+
+      request(server)
+      .post('/api/register')
+      .send({ filename: 'test.json' })
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);
+
+        var id = res.body.id;
+        var uploadUrl = res.body.uploadUrl;
+
+        agent
+        .put(uploadUrl)
+        .send(JSON.stringify({ key: 'value' }))
+        .set('Content-Type', 'binary/octet-stream')
+        .end(function (err, res) {
+          if (err) return done(err);
+
+          request(server)
+          .post('/api/complete/' + id)
+          .expect(200)
+          .end(function (err, res) {
+            if (err) return done(err);
+            console.log('=== complete end ===');
+
+            var data = res.body;
+
+            data.id.should.equal(id);
+            data.filename.should.equal('test.json');
+            data.locale.should.equal('en');
+            data.state.should.equal('available');
+            should.exists(data.pass);
+            should.exists(data.expires);
+
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('GET /api/download/:id', function () {
+    it('should return signed download URL', function (done) {
       var server = app.listen();
 
       console.log('=== register start ===');
@@ -114,18 +201,23 @@ describe('app', function () {
           .end(function (err, res) {
             if (err) return done(err);
             console.log('=== complete end ===');
+            console.log('=== download start ===');
 
-            var data = res.body;
+            var pass = res.body.pass;
+            var auth = 'Basic ' + new Buffer('transfer:' + pass).toString('base64');
 
-            data.id.should.equal(id);
-            data.filename.should.equal('test.json');
-            data.locale.should.equal('en');
-            should.exists(data.pass);
-            should.exists(data.expires);
-            data.downloadUrl.should.equal('http://localhost:3000/download/' + data.id);
+            request(server)
+            .get('/api/download/' + id)
+            .set('Authorization', auth)
+            .expect(200)
+            .end(function (err, res) {
+              if (err) return done(err);
 
-            console.log(data);
-            done();
+              var data = res.body;
+              data.id.should.equal(id);
+              should.exists(data.downloadUrl);
+              done();
+            });
           });
         });
       });
