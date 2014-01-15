@@ -36,21 +36,18 @@ $ cd transfer
 $ npm install
 ```
 
-### Edit dev.sh
+### Edit scripte/.env
 
-Copy `dev.sh.template` to 'dev.sh' and set executable flag.
+Copy `scripts/.env.template` to 'scripts/.env'.
 
 ```
-$ cp dev.sh.template dev.sh
-$ chmod +x dev.sh
-$ vi dev.sh
+$ cp scripts/.env.template scripts/.env
 ```
 
 Then edit to fill in environment value.
 Prefix `AWS_` is required value and others are optional.
 
 ```
-#!/bin/sh
 export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 export AWS_REGION=
@@ -65,7 +62,7 @@ export AWS_DYNAMODB_TABLE=
 ### Run app
 
 ```
-$ ./dev.sh
+$ ./scripts/dev.sh
 ```
 
 ## How to run on Heroku
@@ -80,7 +77,7 @@ $ heroku create [your-app-name]
 
 ```
 $ heroku addons:add mailgun
-$ heroku addons:add sentry
+$ heroku addons:add sentry          # optional
 $ heroku addons:add newrelic:stark  # optional
 $ heroku addons:add papertrail      # optional
 ```
