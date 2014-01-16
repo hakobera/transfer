@@ -6,30 +6,14 @@ var uuid = require('node-uuid');
 var AWS = require('aws-sdk');
 var dynamodb = new AWS.DynamoDB();
 var s3 = new AWS.S3();
+var thunkify = require('thunkify');
 
-var getItem = function (params) {
-  return function (fn) { dynamodb.getItem(params, fn); }
-};
-
-var putItem = function (params) {
-  return function (fn) { dynamodb.putItem(params, fn); }
-};
-
-var getSignedUrl = function (method, params) {
-  return function (fn) { s3.getSignedUrl(method, params, fn); }
-};
-
-var headObject = function (params) {
-  return function (fn) { s3.headObject(params, fn); }
-};
-
-var putObject = function (params) {
-  return function (fn) { s3.putObject(params, fn); }
-};
-
-var getObject = function (params) {
-  return function (fn) { s3.getObject(params, fn); }
-}
+dynamodb.getItem = thunkify(dynamodb.getItem);
+dynamodb.putItem = thunkify(dynamodb.putItem);
+s3.getSignedUrl = thunkify(s3.getSignedUrl);
+s3.headObject = thunkify(s3.headObject);
+s3.putObject = thunkify(s3.putObject);
+s3.getObject = thunkify(s3.getObject);
 
 describe('aws', function () {
   this.timeout(10000);
@@ -42,7 +26,7 @@ describe('aws', function () {
 
         yield aws.putItem(item);
 
-        var data = yield getItem({
+        var data = yield dynamodb.getItem({
           TableName: process.env.AWS_DYNAMODB_TABLE,
           Key: { id: { "S": id } }
         });
@@ -61,7 +45,7 @@ describe('aws', function () {
         yield aws.putItem(item);
         yield aws.putItem(newItem);
 
-        var data = yield getItem({
+        var data = yield dynamodb.getItem({
           TableName: process.env.AWS_DYNAMODB_TABLE,
           Key: { id: { "S": id } }
         });
@@ -93,7 +77,7 @@ describe('aws', function () {
     it('should return item specified by id', function (done) {
       co(function* () {
         var id = uuid.v1();
-        yield putItem({
+        yield dynamodb.putItem({
           TableName: process.env.AWS_DYNAMODB_TABLE,
           Item: { id: { "S": id }, key1: { "S": "value" } }
         });
@@ -119,7 +103,7 @@ describe('aws', function () {
       co(function* () {
         var opts = { id: 'test' };
         var url = yield aws.signedUploadUrl(opts);
-        var expected = yield getSignedUrl('putObject', {
+        var expected = yield s3.getSignedUrl('putObject', {
           Bucket: process.env.AWS_S3_BUCKET,
           Key: opts.id,
           Expires: 86400,
@@ -136,7 +120,7 @@ describe('aws', function () {
           expires: 120
         };
         var url = yield aws.signedUploadUrl(opts);
-        var expected = yield getSignedUrl('putObject', {
+        var expected = yield s3.getSignedUrl('putObject', {
           Bucket: process.env.AWS_S3_BUCKET,
           Key: opts.id,
           Expires: opts.expires,
@@ -154,7 +138,7 @@ describe('aws', function () {
           id: 'test'
         };
         var url = yield aws.signedDownloadUrl(opts);
-        var expected = yield getSignedUrl('getObject', {
+        var expected = yield s3.getSignedUrl('getObject', {
           Bucket: process.env.AWS_S3_BUCKET,
           Key: opts.id,
           Expires: 30
@@ -168,7 +152,7 @@ describe('aws', function () {
     it('should return true if object exists in bucket', function (done) {
       co(function *() {
         var id = uuid.v1();
-        yield putObject({
+        yield s3.putObject({
           Bucket: process.env.AWS_S3_BUCKET,
           Key: id,
           ContentType: 'binary/octet-stream',
@@ -192,7 +176,7 @@ describe('aws', function () {
       co(function* () {
         var id = uuid.v1();
 
-        yield putObject({
+        yield s3.putObject({
           Bucket: process.env.AWS_S3_BUCKET,
           Key: id,
           ContentType: 'text/plain',
@@ -206,7 +190,7 @@ describe('aws', function () {
 
         yield aws.copyObject(item);
 
-        var data = yield getObject({
+        var data = yield s3.getObject({
           Bucket: process.env.AWS_S3_BUCKET,
           Key: id
         });
