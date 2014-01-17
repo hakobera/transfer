@@ -1,0 +1,113 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Template for transfer",
+
+  "Parameters" : {
+    "ReadCapacityUnits" : {
+      "Description" : "Provisioned read throughput",
+      "Type" : "Number",
+      "Default" : "5",
+      "MinValue": "1",
+      "MaxValue": "10000",
+      "ConstraintDescription" : "should be between 5 and 10000"
+    },
+    "WriteCapacityUnits" : {
+      "Description" : "Provisioned write throughput",
+      "Type" : "Number",
+      "Default" : "10",
+      "MinValue": "1",
+      "MaxValue": "10000",
+      "ConstraintDescription" : "should be between 5 and 10000"
+    }
+  },
+
+  "Resources" : {
+
+    "TransferBucket" : {
+      "Type" : "AWS::S3::Bucket"
+    },
+
+    "TransferTable" : {
+      "Type" : "AWS::DynamoDB::Table",
+      "Properties" : {
+        "KeySchema" : {
+          "HashKeyElement": {
+            "AttributeName" : "id",
+            "AttributeType" : "S"
+          }
+        },
+        "ProvisionedThroughput" : {
+          "ReadCapacityUnits" : {"Ref" : "ReadCapacityUnits"},
+          "WriteCapacityUnits" : {"Ref" : "WriteCapacityUnits"}
+        }
+      }
+    },
+
+    "TransferUser" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "Policies" : [
+          {
+            "PolicyName" : "s3_bucket_access",
+            "PolicyDocument" : {
+              "Statement"    : [
+                {
+                  "Action"     : ["s3:*"],
+                  "Effect"     : "Allow",
+                  "Resource"   : [
+                    { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "TransferBucket"} ]]},
+                    { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "TransferBucket"} , "/*"]]}
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName" : "dynamodb_access",
+            "PolicyDocument" : {
+              "Statement"    : [
+                {
+                  "Action"     : ["dynamodb:*"],
+                  "Effect"     : "Allow",
+                  "Resource"   : [
+                    { "Fn::Join" : ["", ["arn:aws:dynamodb:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":table/", {"Ref" : "TransferTable"} ]]}
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+
+    "TransferKey" : {
+      "Type" : "AWS::IAM::AccessKey",
+      "Properties" : {
+        "UserName" : { "Ref" : "TransferUser" }
+      }
+    }
+  },
+
+  "Outputs" : {
+    "BucketName" : {
+      "Value" : { "Ref" : "TransferBucket" },
+      "Description" : "Name of newly created S3 bucket"
+    },
+
+    "TableName" : {
+      "Value" : {"Ref" : "TransferTable"},
+      "Description" : "Table name of the newly create DynamoDB table"
+    },
+
+    "AccessKey" : {
+      "Value" : { "Ref" : "TransferKey" },
+      "Description" : "AWSAccessKeyId of new user"
+    },
+
+    "SecretKey" : {
+      "Value" : { "Fn::GetAtt" : ["TransferKey", "SecretAccessKey"]},
+      "Description" : "AWSSecretKey of new user"
+    }
+  }
+}
