@@ -1,0 +1,13 @@
+*** This is an automatically generated email, please do not reply ***
+
+We are preparing a file.
+We send a notification mail when a file is available.
+Please wait a moment.
+
+Tracking number: {{ item.id }}
+
+{% if item.registerComment %}
+Sender comment:
+
+{{ item.registerComment }}
+{% endif %}

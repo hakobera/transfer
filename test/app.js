@@ -47,10 +47,13 @@ describe('app', function () {
       .send({
         filename: 'test.json',
         to: 'test@example.com',
+        toName: 'Sender Name',
         locale: 'ja',
         subject: 'test title',
         comment: 'test comment',
-        password: 'pass'
+        password: 'pass',
+        registerSubject: 'register title',
+        registerComment: 'register comment'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -67,8 +70,11 @@ describe('app', function () {
         data.state.should.equal('preparing');
         data.downloadUrl.should.equal('http://localhost:3000/download/' + data.id);
         data.to.should.equal('test@example.com');
+        data.toName.should.equal('Sender Name');
         data.subject.should.equal('test title');
         data.comment.should.equal('test comment');
+        data.registerSubject.should.equal('register title');
+        data.registerComment.should.equal('register comment');
 
         // check upload url
         agent

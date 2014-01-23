@@ -19,7 +19,7 @@ var uuid = require('node-uuid');
 var raven = require('raven');
 var util = require('util');
 var moment = require('moment');
-var i18n = require('i18n');
+var i18n = require('./lib/i18n');
 var aws = require('./lib/aws');
 var render = require('./lib/render');
 var auth = require('./lib/auth');
@@ -62,15 +62,6 @@ if (env === 'production') {
 }
 
 /**
- * i18n settings
- */
-i18n.configure({
-  locales: ['en', 'ja'],
-  defaultLocale: 'en',
-  directory: __dirname + '/locales'
-});
-
-/**
  * API route
  */
 
@@ -86,9 +77,7 @@ app.use(route.post('/api/register', function *() {
   }
 
   var id = uuid.v1();
-  var signedUrl = yield aws.signedUploadUrl({
-    id: id
-  });
+  var signedUrl = yield aws.signedUploadUrl({ id: id });
 
   var item = {
     id: id,
@@ -96,8 +85,11 @@ app.use(route.post('/api/register', function *() {
     state: state.PREPARING,
     locale: body.locale || 'en',
     to: body.to,
+    toName: body.toName,
     subject: body.subject,
-    comment: body.comment
+    comment: body.comment,
+    registerSubject: body.registerSubject,
+    registerComment: body.registerComment
   };
 
   var credential = yield* auth.create(body.password);
@@ -110,6 +102,8 @@ app.use(route.post('/api/register', function *() {
   item.downloadUrl = downloadUrl(id);
   delete item.hashedPass;
   this.body = item;
+
+  mail.sendRegisterMail(item);
 }));
 
 app.use(route.post('/api/complete/:id', function *(id) {

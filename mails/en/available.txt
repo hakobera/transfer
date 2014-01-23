@@ -1,11 +1,15 @@
 *** This is an automatically generated email, please do not reply ***
 
-You have received a new file.
-Follow the link below to download the file:
+You have received a new file{% if item.toName %} from {{ item.toName }}{% endif %}.
+Follow the link below to download the file.
+
+* You need to enter password to download the file.
 
 URL:
 {{ item.downloadUrl }}
 
+{% if item.comment %}
 Sender comment:
 
 {{ item.comment }}
+{% endif %}
