@@ -19,7 +19,7 @@ describe('mail', function () {
     it('should send mail', function (done) {
       var item = {
         to: 'test@example.com',
-        title: 'Tile of mail',
+        subject: 'Tile of mail',
         comment: 'test',
         downloadUrl: 'http://localhost:3000/download/1'
       };
@@ -32,7 +32,7 @@ describe('mail', function () {
         mail.send.calledWith(
           process.env.MAIL_FROM,
           item.to,
-          item.title,
+          item.subject,
           text,
           cb
         ).should.be.true;

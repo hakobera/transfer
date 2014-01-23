@@ -81,8 +81,8 @@ app.use(route.post('/api/register', function *() {
     this.throw(400, '.filename is required.');
   }
 
-  if (body.to && !body.title) {
-    this.throw(400, '.title is required if .recipient is set')
+  if (body.to && !body.subject) {
+    this.throw(400, '.subject is required if .to is set');
   }
 
   var id = uuid.v1();
@@ -96,7 +96,7 @@ app.use(route.post('/api/register', function *() {
     state: state.PREPARING,
     locale: body.locale || 'en',
     to: body.to,
-    title: body.title,
+    subject: body.subject,
     comment: body.comment
   };
 

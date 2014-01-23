@@ -48,7 +48,7 @@ describe('app', function () {
         filename: 'test.json',
         to: 'test@example.com',
         locale: 'ja',
-        title: 'test title',
+        subject: 'test title',
         comment: 'test comment',
         password: 'pass'
       })
@@ -67,7 +67,7 @@ describe('app', function () {
         data.state.should.equal('preparing');
         data.downloadUrl.should.equal('http://localhost:3000/download/' + data.id);
         data.to.should.equal('test@example.com');
-        data.title.should.equal('test title');
+        data.subject.should.equal('test title');
         data.comment.should.equal('test comment');
 
         // check upload url
