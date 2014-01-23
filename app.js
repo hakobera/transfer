@@ -230,6 +230,8 @@ app.on('error', function(err){
  * Run server
  */
 
-app.listen(port, function () {
-  console.log('app running on %d', port);
-});
+if (!module.parent) {
+  app.listen(port, function () {
+    console.log('app running on %d', port);
+  });
+}

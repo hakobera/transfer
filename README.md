@@ -62,7 +62,15 @@ export AWS_DYNAMODB_TABLE=
 ### Run app
 
 ```
-$ ./scripts/dev.sh
+$ ./scripts/start.sh
+```
+
+## How to run test on local
+
+Set environment value in `./scripts/.env`, then run this:
+
+```
+$ ./scripts/test.sh
 ```
 
 ## How to run on Heroku
