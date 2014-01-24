@@ -195,6 +195,14 @@ app.use(route.get('/download/:id', function *(id) {
 }));
 
 /**
+ * Health check
+ */
+
+app.use(route.get('/ping', function *() {
+  this.body = { pong: true };
+}));
+
+/**
  * Static files.
  */
 

@@ -297,4 +297,14 @@ describe('app', function () {
       });
     });
   });
+
+  describe('GET /ping', function () {
+    it('should return pong', function (done) {
+      request(app.listen())
+        .get('/ping')
+        .expect('Content-Type', /json/)
+        .expect(200, { pong: true })
+        .end(done);
+    });
+  });
 });
