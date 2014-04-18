@@ -36,7 +36,7 @@ $ cd transfer
 $ npm install
 ```
 
-### Edit scripte/.env
+### Edit scripts/.env
 
 Copy `scripts/.env.template` to 'scripts/.env'.
 
