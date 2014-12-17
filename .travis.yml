@@ -7,5 +7,5 @@ env:
   - AWS_REGION="us-east-1"
   - AWS_S3_BUCKET="hakobera-transfer-test"
   - AWS_DYNAMODB_TABLE="transfer_test"
-  - secure: Qa6QMdcxDLIz1eYV4nXiGQuYkDu4IsgleAezx/s+Ym7FdBJJEVmoljsop/adF1hMKeE2Rz766OrNxj/nMbU168DXhZ3bwWctGjU6xRUpJzlW+UFsdzePdnNOys5ejwZ+bZq9AQd+D9HaQEb+ccXurdcFCBT1njSoMGRDRYW+1AE=
-  - secure: abz4vP8uAe98ahdmYBJr6mMvI6uUxekc+ZHY7gxzBkG4vXzOeXBY2XEEN4qwdeLo7IiyZbZySQoyi2dqOW2/vRxb3S2PtYfDhkdvduBIjjOdbZfaKnuMs9AqbgCWut0DdG+57O2a3Oerv1c4EJ1XYIILf1iGxvsUd3ymtTMGQDI=
+  - secure: MwSZUBF91mkFbI3TsSsss2PsSWbBf3atDHcctidX4ABVOuckECHpNQR9UWE0Cu0RaYGxMHk5UoIb6ley08JeHAeNJifcFfg8Z21CXdsjuFOwdDxuGXMPCi52UU1jogQNx5nr70MYW66JkdbXiQPiqTYy5mATkK045wU1S12CiQ0=
+  - secure: WiKHcfIZrcg1BiUZMlnx4rQS36bJQQfcc/0L2HsbYf//KWKLBYNKTeggO0U9cbb3sIanqv5B7l0la3dPOZ4maYDSH73m69fWGm3eWSfwNk5JPgvyLTBU64CrKrBsMMBQlvy7Uq8lzxPnTNtja9+OILkrq/DzHdtzZIqjGNyxGNQ=
