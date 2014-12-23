@@ -2,6 +2,13 @@
 
 Transfer is a simple file sharing service.
 
+## How to work
+
+1. Reserve a file transfer. It will return its id and endpoint to upload file. File info is stored in DynamoDB.
+2. Upload the file to the endpoint. It will be uploaded to S3.
+3. An email will be sent to the address which was used at reservation.
+4. Emails includes an url and the user can download file from there.
+
 ## How to run on your local machine
 
 ### Install Node.js 0.11.9 or higher.
