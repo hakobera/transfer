@@ -1,0 +1,14 @@
+*** Este es un email generado automaticamente, por favor no responda ***
+
+Ha recibido un nuevo documento {% if item.toName %} de {{ item.toName }}{% endif %}.Clique el enlace de abajo para que se descargue el documento.
+
+* Necesita entrar una contraseña para que se descargue el documento.
+
+URL:
+{{ item.downloadUrl }}
+
+{% if item.comment %}
+Comentario enviado:
+
+{{ item.comment }}
+{% endif %}
