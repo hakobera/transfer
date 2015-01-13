@@ -1,0 +1,13 @@
+*** Este es un email generado automaticamente, por favor no responda ***
+
+Estamos preparando un documento.
+Le enviaremos un email de notificación cuando el documento se encuentre disponible.
+Por favor espere unos minutos.
+
+Número de rastreo: {{ item.id }}
+
+{% if item.registerComment %}
+Comentario enviado:
+
+{{ item.registerComment }}
+{% endif %}

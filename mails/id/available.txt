@@ -1,0 +1,15 @@
+*** Ini adalah email otomatis, mohon untuk tidak membalas ***
+
+Anda telah menerima file baru{% if item.toName %} dari {{ item.toName }}{% endif %}.
+Silakan klik tautan berikut ini untuk mengunduh file.
+
+* Anda perlu memasukkan kata sandi (password) untuk dapat mengunduh file.
+
+URL:
+{{ item.downloadUrl }}
+
+{% if item.comment %}
+Komentar pengirim:
+
+{{ item.comment }}
+{% endif %}

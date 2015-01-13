@@ -112,4 +112,26 @@ describe('mail', function () {
       mail.subject(item, 'available').should.equal('Subject');
     });
   });
+
+  describe('#template', function () {
+    it('should return english template path if no locale specified', function () {
+      var item = {};
+      mail.template('register', item).should.equal(__dirname.replace('test', 'lib') + '/../mails/en/register.txt');
+    });
+
+    it('should return specified locale template path if supported locale is available', function () {
+      var item = { locale: 'es' };
+      mail.template('register', item).should.equal(__dirname.replace('test', 'lib') + '/../mails/es/register.txt');
+    });
+
+    it('should return matched short locale template path if supported locale is available', function () {
+      var item = { locale: 'es-MX' };
+      mail.template('register', item).should.equal(__dirname.replace('test', 'lib') + '/../mails/es/register.txt');
+    });
+
+    it('should return english template path if locale is not supported', function () {
+      var item = { locale: 'invalid' };
+      mail.template('register', item).should.equal(__dirname.replace('test', 'lib') + '/../mails/en/register.txt');
+    });
+  });
 });

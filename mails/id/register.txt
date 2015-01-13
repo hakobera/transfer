@@ -1,0 +1,13 @@
+*** Ini adalah email otomatis, mohon untuk tidak membalas ***
+
+Kami sedang menyiapkan sebuah file.
+Kami akan mengirimkan notifikasi jika file tersebut sudah siap.
+Mohon untuk menunggu.
+
+Nomor file: {{ item.id }}
+
+{% if item.registerComment %}
+Komentar pengirim:
+
+{{ item.registerComment }}
+{% endif %}
