@@ -20,6 +20,7 @@ var raven = require('raven');
 var util = require('util');
 var moment = require('moment');
 var i18n = require('./lib/i18n');
+var locales = require('./lib/locales');
 var aws = require('./lib/aws');
 var render = require('./lib/render');
 var auth = require('./lib/auth');
@@ -187,10 +188,12 @@ app.use(route.get('/download/:id', function *(id) {
     this.throw(403, 'File has expired');
   }
 
-  item.downloadUrl = '/api/download/' + item.id;
-  item.expiredDate = moment(item.expires).lang(item.locale || 'en').format('LLL');
+  var locale = locales.detect(item);
+  i18n.setLocale(locale);
 
-  i18n.setLocale(item.locale);
+  item.downloadUrl = '/api/download/' + item.id;
+  item.expiredDate = moment(item.expires).lang(locale).format('LLL');
+
   this.body = yield render('download', { item: item, i18n: i18n });
 }));
 
